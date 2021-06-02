@@ -10,4 +10,12 @@ router.post(
 	v.isRequestValidated
 );
 
+router.post(
+	'/login',
+	auth.login,
+	v.validateRegisterRequest,
+	v.isRequestValidated
+);
+
+
 export default router;

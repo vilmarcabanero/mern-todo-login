@@ -7,35 +7,33 @@ const Todods = () => {
 	const [credentials] = useContext(CredentialsContext);
 	const [todos, setTodos] = useState([]);
 
-	const persist = async () => {
+	const persist = newTodos => {
 		const config = {
 			header: {
 				'Content-Type': 'application/json',
-				Authorization: `Basic ${credentials.email}:${credentials.password}`,
+				auth: `Basic ${credentials.email}:${credentials.password}`,
 			},
-			body: todos,
+			todos: newTodos,
 		};
 
-		try {
-			await axios
-				.post(
-					'http://localhost:4000/api/todos',
-
-					config
-				)
-				.then(({ data }) => {
-					console.log(data.message);
-				});
-		} catch (err) {}
+		axios
+			.post('http://localhost:4000/api/todos', config)
+			.then(({ data }) => {
+				console.log(data.message);
+			})
+			.catch(err => {
+				console.log(err.message);
+			});
 	};
 
 	const addTodo = e => {
 		e.preventDefault();
 		if (!todoText.trim('')) return;
 		const newTodo = { checked: false, text: todoText };
-		setTodos([...todos, newTodo]);
+		const newTodos = [...todos, newTodo];
+		setTodos(newTodos);
 		setTodoText('');
-		persist();
+		persist(newTodos);
 	};
 
 	const toggleTodo = index => {
