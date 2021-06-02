@@ -3,15 +3,15 @@ import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { CredentialsContext } from '../App';
 
-const RegisterPage = () => {
+
+const LoginPage = () => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-	const [username, setUsername] = useState('');
 	const [error, setError] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
 	const [credentials, setCredentials] = useContext(CredentialsContext);
 
-	const register = async e => {
+	const login = async e => {
 		e.preventDefault();
 
 		const config = {
@@ -23,21 +23,20 @@ const RegisterPage = () => {
 		try {
 			await axios
 				.post(
-					'http://localhost:4000/api/auth/register',
-					{ email, password, username },
+					'http://localhost:4000/api/auth/login',
+					{ email, password },
 					config
 				)
-				.then(() => {
+				.then(({ data }) => {
+					console.log(data.message);
 					setCredentials({
-						username,
 						email,
 						password,
+						username: data.username,
 					});
 					history.push('/');
 				})
 				.then(setIsLoading(true));
-
-			console.log('User successfully created.');
 		} catch (err) {
 			console.log(err.response.data.message);
 			setError(err.response.data.message);
@@ -60,14 +59,9 @@ const RegisterPage = () => {
 
 	return (
 		<div className='App'>
-			<h1> Register</h1>
+			<h1> Login</h1>
 			{error}
-			<form onSubmit={register}>
-				<input
-					onChange={e => setUsername(e.target.value)}
-					placeholder='username'
-				/>
-				<br />
+			<form onSubmit={login}>
 				<input onChange={e => setEmail(e.target.value)} placeholder='email' />
 				<br />
 				<input
@@ -76,10 +70,10 @@ const RegisterPage = () => {
 					placeholder='password'
 				/>
 				<br />
-				<button type='submit'>Register</button>
+				<button type='submit'>Login</button>
 			</form>
 		</div>
 	);
 };
 
-export default RegisterPage;
+export default LoginPage;
